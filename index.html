@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>平均值 & 相对偏差 生成</title>
+    <style>
+        body,
+        html {
+            padding: 0;
+            margin: 0;
+            background: #333;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .input-item input {
+            width: 350px;
+            height: 50px;
+            line-height: 50px;
+            padding: 10px;
+            color: #06323c;
+            outline: none;
+            border: 1px solid #333;
+            box-sizing: border-box;
+            font-size: 18px;
+            border-radius: 10px;
+        }
+
+        .input-item input::placeholder {
+            font-size: 13px;
+        }
+
+        .input-item {
+            width: 600px;
+            padding: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-item span {
+            display: inline-block;
+            text-align: right;
+            width: 200px;
+            padding-right: 30px;
+        }
+
+        .input-item textarea {
+            width: 350px;
+            height: 500px;
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        .input-item textarea:disabled {
+            background: rgb(220, 255, 249);
+            color: #000;
+        }
+
+        .input-item textarea.success-text {
+            color: red;
+            background-color: #000;
+            border-color: #3383ff;
+        }
+
+        .input-item.btn-wrap {
+            width: 800px;
+            margin: 0 auto;
+        }
+
+        .btn {
+            margin: 20px auto;
+            padding-left: 100px;
+            width: 240px;
+            height: 50px;
+        }
+
+        .btn.start-btn {
+            padding-left: 200px;
+        }
+
+        .btn button {
+            height: 60px;
+            width: 100%;
+            outline: none;
+            border-radius: 10px;
+            border: none;
+            color: #fff;
+            background-color: rgb(41, 196, 223);
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .btn button:disabled {
+            opacity: 0.5;
+        }
+
+        .btn button.close {
+            background-color: #fff;
+            color: #000;
+        }
+
+        .pad20 {
+            padding: 20px 0;
+        }
+
+        .red {
+            color: rgb(255, 96, 96);
+        }
+
+        .text-indent {
+            text-indent: 3em;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <h2>平均值 & 相对偏差生成随机数（<span class="red">通过平均值和相对偏差生成n项范围内随机数</span>）</h2>
+        <div class="input-item">
+            <span>treatment（<b class="red">必填</b>）：</span>
+            <input class="treatment" type="text" placeholder="请放入treatment，例如87.63±5.38">
+        </div>
+        <div class="input-item">
+            <span>生成数据项(默认30项）：</span>
+            <input class="arr-length" type="number" placeholder="项数，例如30个就是 写30">
+        </div>
+        <div class="flex">
+            <div class="input-item">
+                <span>精确值处理（默认3）：</span>
+                <input class="fixed-num" type="number" placeholder="小数点后多少位 3就是 0.001、2就是0.01">
+            </div>
+            <div class="input-item">
+                <span>单次变化最大值：<br>（默认0.15）</span>
+                <input class="random-max-value" type="text" placeholder="输入0.15，即产生0到0.15之间的值">
+            </div>
+        </div>
+        <div class="flex">
+            <div class="input-item">
+                <span>平均值偏差值：<br />（默认0.001）</span>
+                <input class="deviation-p" placeholder="平均值偏差 87.63  就是 87.631 - 87.629 之间">
+            </div>
+            <div class="input-item">
+                <span>相对偏差偏差值：<br />（默认0.0004）</span>
+                <input class="deviation-c" placeholder="例如 5.38 就是偏差 5.3804 - 5.3796 之间">
+            </div>
+        </div>
+        <div class="flex">
+            <div class="input-item">
+                <span>
+                    平均值最小值差：<br />
+                    （默认1.8个相对偏差）
+                </span>
+                <input class="min-p-value" placeholder="平均值 - 相对偏差 x 1.8 = 最小值，不能小于77.946">
+            </div>
+            <div class="input-item">
+                <span>
+                    平均值最大值差：<br />
+                    （默认2个相对偏差）
+                </span>
+                <input class="max-p-value" placeholder="平均值 + 相对偏差 x 2 = 最大值，不能大于98.39">
+            </div>
+        </div>
+
+
+        <div class="input-item btn-wrap">
+            <div class="btn start-btn">
+                <button>开始执行</button>
+            </div>
+            <div class="btn">
+                <button class="close">取消执行</button>
+            </div>
+        </div>
+
+        <div class="pad20">
+            <p class="red">例子都以 87.63±5.38 为标准举例、默认项可以不配置，使用默认。</p>
+            <p class="red">
+                注意：『相对偏差/平均值偏差值』受 "精确值处理" 影响、当精确值到小数点3位时，偏差值最小就是0.0001
+            </p>
+            <p class="red text-indent">
+                "单次变化最大值" 越小，单次变化越小、执行程序时间越久，"偏差值"也类似，越小越难找到精准值。
+            </p>
+            <p class="red text-indent">
+                注意检查 treatment 的格式，不对会执行出错误结果。
+            </p>
+            <p class="red text-indent">
+                配置 平均值最小值差 和 平均值最大值差，按照默认就是：87.63 - 5.38 - 1.8 = 77.946，87.63 + 5.38 - 2 = 98.39，生成随机数不能大于 98.39、不能小于
+                77.946。
+            </p>
+        </div>
+
+        <div class="flex">
+            <div class="input-item">
+                <span>随机数列表（直接复制）：</span>
+                <textarea name="success" class="success-text" cols="30" rows="10"></textarea>
+            </div>
+            <div class="input-item">
+                <span>程序执行输出：</span>
+                <textarea name="错误输出" class="console-text" cols="30" rows="10" disabled></textarea>
+            </div>
+
+        </div>
+    </div>
+    <script src="./start.js"></script>
+</body>
+
+</html>
