@@ -142,8 +142,8 @@
                 <input class="fixed-num" type="number" placeholder="小数点后多少位 3就是 0.001、2就是0.01">
             </div>
             <div class="input-item">
-                <span>单次变化最大值：<br>（默认0.15）</span>
-                <input class="random-max-value" type="text" placeholder="输入0.15，即产生0到0.15之间的值">
+                <span>单次变化比：<br>（默认相对偏差/100）</span>
+                <input class="random-max-value" type="text" placeholder="输入100，即产生0到相对偏差/100之间的值">
             </div>
         </div>
         <div class="flex">
@@ -189,7 +189,7 @@
                 注意：『相对偏差/平均值偏差值』受 "精确值处理" 影响、当精确值到小数点3位时，偏差值最小就是0.0001
             </p>
             <p class="red text-indent">
-                "单次变化最大值" 越小，单次变化越小、执行程序时间越久，"偏差值"也类似，越小越难找到精准值。
+                "单次变化比" 越小，单次变化越小、执行程序时间越久，"偏差值"也类似，越小越难找到精准值。
             </p>
             <p class="red text-indent">
                 注意检查 treatment 的格式，不对会执行出错误结果。

@@ -54,7 +54,7 @@ btn.onclick = function () {
   const minPValue = +(p - c * (+minPValueEle.value || 1.8)).toFixed(FIXED_NUM); // 与平均值的距离 87.63 - 5.38 * 1.8 = 77.946，不能小于 77.946
   const maxPValue = +(p + c * (+maxPValueEle.value || 2)).toFixed(FIXED_NUM); // 与平均值的距离 87.63 + 5.38 * 2 = 98.39，不能大于 98.39
 
-  const randomScale = +randomMaxValueEle.value || 0.15; // 每次加的值，0到0.15、可以调整这个值
+  const randomScale = c / +(randomMaxValueEle.value || 100); // 每次加的值，0到0.15、可以调整这个值
   consoleText.value += `开始 ---> 平均值: ${p}，相对偏差: ${c} \ntreatment: ${treatment.value}`;
   consoleText.value += `\n生成数据项：${length}个，小数点后${FIXED_NUM}位`;
   consoleText.value += `\n单次变化最大值：${randomScale}`;
