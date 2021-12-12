@@ -78,7 +78,6 @@ btn.onclick = function () {
     if (!isStart) return;
     let arr = Array.from({ length }).map(() => p);
     let curP = p;
-    let reCalcValue = 0;
     let curC = +calcC(arr, p).toFixed(FIXED_NUM + 1);
     while (Math.abs(curC - c) > cAndCurrentC && curC - c < 0.1) {
       for (let index = 0; index < length; index++) {
@@ -93,14 +92,7 @@ btn.onclick = function () {
         ).toFixed(FIXED_NUM);
 
         arr[index] = +(val + (isAdd ? random : -random)).toFixed(FIXED_NUM);
-        // 出现过大，结束
-        if (arr[index] < minPValue || arr[index] > maxPValue) {
-          reCalcValue = arr[index];
-          break;
-        }
       }
-      // 出现值过大，继续结束
-      if (reCalcValue) break;
       curP = +calcP(arr).toFixed(FIXED_NUM + 1);
       curC = +calcC(arr, curP).toFixed(FIXED_NUM + 1);
     }
@@ -114,9 +106,10 @@ btn.onclick = function () {
       });
       return;
     }
+    const isNoValue = arr.find((item) => item < minPValue || item > maxPValue);
     // 偏差过大
-    if (reCalcValue) {
-      consoleText.value += `\n当前值: ${reCalcValue} 与平均值${curP} ----> 偏差太大`;
+    if (isNoValue) {
+      consoleText.value += `\n当前值: ${isNoValue} 与平均值${curP} ----> 偏差太大`;
       // 重新循环 计算
       requestAnimationFrame(() => {
         calcArr(p, c, length);
