@@ -54,7 +54,9 @@ btn.onclick = function () {
   const minPValue = +(p - c * (+minPValueEle.value || 1.8)).toFixed(FIXED_NUM); // 与平均值的距离 87.63 - 5.38 * 1.8 = 77.946，不能小于 77.946
   const maxPValue = +(p + c * (+maxPValueEle.value || 2)).toFixed(FIXED_NUM); // 与平均值的距离 87.63 + 5.38 * 2 = 98.39，不能大于 98.39
 
-  const randomScale = c / +(randomMaxValueEle.value || 100); // 每次加的值，0到0.15、可以调整这个值
+  const randomScale = +(c / +(randomMaxValueEle.value || 100)).toFixed(
+    FIXED_NUM + 1
+  ); // 每次加的值，0到0.15、可以调整这个值
   consoleText.value += `开始 ---> 平均值: ${p}，相对偏差: ${c} \ntreatment: ${treatment.value}`;
   consoleText.value += `\n生成数据项：${length}个，小数点后${FIXED_NUM}位`;
   consoleText.value += `\n单次变化最大值：${randomScale}`;
@@ -64,29 +66,41 @@ btn.onclick = function () {
   requestAnimationFrame(() => {
     calcArr(p, c, length);
   });
-
+  let randomValue = 0;
+  function getRandom(i = 0) {
+    if (i % FIXED_NUM === 0 || randomValue) {
+      randomValue = Math.random() * randomScale;
+    }
+    return +randomValue.toFixed(FIXED_NUM);
+  }
   function calcArr(p, c, length) {
     // 不执行
     if (!isStart) return;
     let arr = Array.from({ length }).map(() => p);
     let curP = p;
-
+    let reCalcValue = 0;
     let curC = +calcC(arr, p).toFixed(FIXED_NUM + 1);
     while (Math.abs(curC - c) > cAndCurrentC && curC - c < 0.1) {
       for (let index = 0; index < length; index++) {
         const val = arr[index];
-        const random = +(Math.random() * randomScale).toFixed(FIXED_NUM);
+        const random = getRandom(index);
         const isAdd = Math.random() > 0.5;
         // 随机索引 取整数
-        const randomIndex = (Math.random() * (length - 1)).toFixed(0);
+        let randomIndex = (Math.random() * (length - 1)).toFixed(0);
         // 补充加的情况（加多少减多少）
         arr[randomIndex] = +(
           arr[randomIndex] + (isAdd ? -random : random)
         ).toFixed(FIXED_NUM);
 
         arr[index] = +(val + (isAdd ? random : -random)).toFixed(FIXED_NUM);
+        // 出现过大，结束
+        if (arr[index] < minPValue || arr[index] > maxPValue) {
+          reCalcValue = arr[index];
+          break;
+        }
       }
-
+      // 出现值过大，继续结束
+      if (reCalcValue) break;
       curP = +calcP(arr).toFixed(FIXED_NUM + 1);
       curC = +calcC(arr, curP).toFixed(FIXED_NUM + 1);
     }
@@ -100,11 +114,9 @@ btn.onclick = function () {
       });
       return;
     }
-    // 验证是否有超出的值
-    const item = arr.find((item) => item < minPValue || item > maxPValue);
     // 偏差过大
-    if (item) {
-      consoleText.value += `\n当前值: ${item} 与平均值${curP} ----> 偏差太大`;
+    if (reCalcValue) {
+      consoleText.value += `\n当前值: ${reCalcValue} 与平均值${curP} ----> 偏差太大`;
       // 重新循环 计算
       requestAnimationFrame(() => {
         calcArr(p, c, length);
