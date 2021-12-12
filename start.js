@@ -49,10 +49,10 @@ btn.onclick = function () {
 
   const cAndCurrentC = +deviationCEle.value || 0.0004; // 相对偏差偏差值 例如 5.38 就是偏差 5.3804 - 5.3796 之间
 
-  const pAndCurrentP = +deviationPEle.value || 0.001; // 平均值偏差 87.63  就是 87.631 - 87.629 之间
+  const pAndCurrentP = +deviationPEle.value || 0.002; // 平均值偏差 87.63  就是 87.631 - 87.629 之间
 
-  const minPValue = +(p - c * (+minPValueEle.value || 1.8)).toFixed(FIXED_NUM); // 与平均值的距离 87.63 - 5.38 * 1.8 = 77.946，不能小于 77.946
-  const maxPValue = +(p + c * (+maxPValueEle.value || 2)).toFixed(FIXED_NUM); // 与平均值的距离 87.63 + 5.38 * 2 = 98.39，不能大于 98.39
+  const minPValue = +(p - c * (+minPValueEle.value || 1.3)).toFixed(FIXED_NUM); // 与平均值的距离 87.63 - 5.38 * 1.8 = 77.946，不能小于 77.946
+  const maxPValue = +(p + c * (+maxPValueEle.value || 1.3)).toFixed(FIXED_NUM); // 与平均值的距离 87.63 + 5.38 * 2 = 98.39，不能大于 98.39
 
   const randomScale = +(c / +(randomMaxValueEle.value || 100)).toFixed(
     FIXED_NUM + 1
